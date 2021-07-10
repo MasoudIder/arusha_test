@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -67,6 +68,7 @@ public class DocumentController {
     @DeleteMapping
     public ResponseEntity delete(@RequestBody String id) {
         Optional<Document> document = service.findById(Integer.parseInt(id));
+        //exceptions not considered
         if (document.isPresent()) {
             service.delete(document.get().getId());
             return new ResponseEntity( HttpStatus.OK);
