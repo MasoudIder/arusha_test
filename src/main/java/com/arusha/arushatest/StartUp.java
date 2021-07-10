@@ -22,18 +22,21 @@ public class StartUp implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 
+        //define new persons
         Person person1 = new Person("ali", "ahmadi");
         Person person2 = new Person("reza", "rahmani");
         Person person3 = new Person("hassan", "rostami");
         Person person4 = new Person("mohammad", "akbari");
         Person person5 = new Person("javad", "rezaie");
 
+        //define new documents
         Document document1 = new Document("Cloud_Computing");
         Document document2 = new Document("Data_Base");
         Document document3 = new Document("Machine_Learning");
         Document document4 = new Document("Algorithm");
         Document document5 = new Document("Data_Structure");
 
+        //define relationships
         person1.getDocumentSet().add(document1);
         person1.getDocumentSet().add(document2);
         person1.getDocumentSet().add(document5);
@@ -63,5 +66,20 @@ public class StartUp implements ApplicationListener<ContextRefreshedEvent> {
         personService.save(person3);
         personService.save(person4);
         personService.save(person5);
+
+
+        //do some edits
+
+        //update one person
+        Person person = personService.findById(1).get();
+        person.setFirstName("ali_reza");
+        personService.save(person);
+
+        //update one document
+        Document document = documentService.findById(1).get();
+        document.setName("Cloud_Computing_Advanced");
+        documentService.save(document);
+
+
     }
 }

@@ -1,13 +1,16 @@
 package com.arusha.arushatest.Controllers;
 
 import com.arusha.arushatest.Entities.Document;
+import com.arusha.arushatest.Entities.Person;
 import com.arusha.arushatest.ResponseModel.DocumentResponseModel;
 import com.arusha.arushatest.Services.DocumentService;
+import com.arusha.arushatest.Services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.Doc;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +22,8 @@ public class DocumentController {
 
     @Autowired
     private DocumentService service;
+    @Autowired
+    private PersonService personService;
 
     @GetMapping
     public ResponseEntity<Set<DocumentResponseModel>> getAll() {
@@ -67,14 +72,21 @@ public class DocumentController {
 
     @DeleteMapping
     public ResponseEntity delete(@RequestBody String id) {
-        Optional<Document> document = service.findById(Integer.parseInt(id));
-        //exceptions not considered
-        if (document.isPresent()) {
-            service.delete(document.get().getId());
-            return new ResponseEntity( HttpStatus.OK);
+        Optional<Document> optionalDocument = service.findById(Integer.parseInt(id));
+        if (optionalDocument.isPresent()) {
+
+            Document document = optionalDocument.get();
+            document.getPersonSet().forEach(person -> {
+                person.getDocumentSet().remove(document);
+                personService.save(person);
+            });
+
+            service.delete(document.getId());
+
+            return new ResponseEntity(HttpStatus.OK);
 
         } else {
-            return new ResponseEntity( HttpStatus.NOT_FOUND);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
 
         }
     }
